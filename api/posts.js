@@ -28,3 +28,5 @@ router.delete('/:postId', async (req, res, next) => {
     const deletedPost = await deletePostInDatabase(id);
     res.json(deletedPost);
 })
+
+module.exports = router; 

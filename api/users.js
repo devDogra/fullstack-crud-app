@@ -28,3 +28,5 @@ router.delete('/:userId', async (req, res, next) => {
     const deletedUser = await deleteUserInDatabase(id);
     res.json(deletedUser);
 })
+
+module.exports = router; 
