@@ -1,31 +1,35 @@
 const router = require('express').Router(); 
+const mongoose = require('mongoose'); 
+const User = mongoose.model('User');
 
 router.get('/', async (req, res, next) => {
-    const users = await getUsersFromDatabase();
+    const users = await User.find();
     res.json(users);
 })
 
 router.post('/', async (req, res, next) => {
     const userData = req.body; 
-    const createdUser = await createNewUserInDatabase(userData);
+    const createdUser = await User.create(userData);
     res.json(createdUser);
 })
 
 router.patch('/:userId', async (req, res, next) => {
     const data = req.body; 
-    const updatedUser = await partiallyUpdateUserInDatabase(req.params.userId, data);
+    const user = await User.findById(req.params.userId);
+    const updatedUser = Object.assign(user, data);
     res.json(updatedUser);
 })
 
 router.put('/:userId', async (req, res, next) => {
     const data = req.body; 
-    const updatedUser = await updateUserInDatabase(req.params.userId, data); 
+    const user = await User.findById(req.params.userId);
+    const updatedUser = Object.assign(user, data);
     res.json(updatedUser);
 })
 
 router.delete('/:userId', async (req, res, next) => {
     const id = req.params.userId; 
-    const deletedUser = await deleteUserInDatabase(id);
+    const deletedUser = await User.findByIdAndDelete(id);
     res.json(deletedUser);
 })
 

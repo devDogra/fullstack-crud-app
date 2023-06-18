@@ -10,6 +10,7 @@ app = express();
 app.use(express.urlencoded({extended: true}));
 app.use(express.json({strict: false}));
 
+
 // API Routes
 app.use('/users', APIroutes.users);
 app.use('/posts', APIroutes.posts);
