@@ -7,6 +7,11 @@ router.get('/', async (req, res, next) => {
     res.json(posts);
 })
 
+router.get('/:postId', async (req, res, next) => {
+    const post = await Post.findById(req.params.postId);
+    res.json(post);
+})
+
 router.post('/', async (req, res, next) => {
     const postData = req.body; 
     const createdPost = await Post.create(postData);

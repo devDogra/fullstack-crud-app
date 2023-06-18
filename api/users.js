@@ -7,6 +7,12 @@ router.get('/', async (req, res, next) => {
     res.json(users);
 })
 
+router.get('/:userId', async (req, res, next) => {
+    const user = await User.findById(req.params.userId);
+    res.json(user);
+})
+
+
 router.post('/', async (req, res, next) => {
     const userData = req.body; 
     const createdUser = await User.create(userData);
