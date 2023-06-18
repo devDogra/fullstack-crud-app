@@ -8,6 +8,8 @@ router.get('/', async (req, res, next) => {
 })
 
 router.get('/:userId', async (req, res, next) => {
+    if (!mongoose.isValidObjectId(req.params.userId)) return res.json();
+
     const user = await User.findById(req.params.userId);
     res.json(user);
 })
@@ -20,6 +22,8 @@ router.post('/', async (req, res, next) => {
 })
 
 router.patch('/:userId', async (req, res, next) => {
+    if (!mongoose.isValidObjectId(req.params.userId)) return res.json();
+
     const data = req.body; 
     const user = await User.findById(req.params.userId);
     const updatedUser = Object.assign(user, data);
@@ -27,6 +31,8 @@ router.patch('/:userId', async (req, res, next) => {
 })
 
 router.put('/:userId', async (req, res, next) => {
+    if (!mongoose.isValidObjectId(req.params.userId)) return res.json();
+
     const data = req.body; 
     const user = await User.findById(req.params.userId);
     const updatedUser = Object.assign(user, data);
@@ -34,6 +40,8 @@ router.put('/:userId', async (req, res, next) => {
 })
 
 router.delete('/:userId', async (req, res, next) => {
+    if (!mongoose.isValidObjectId(req.params.userId)) return res.json();
+
     const id = req.params.userId; 
     const deletedUser = await User.findByIdAndDelete(id);
     res.json(deletedUser);

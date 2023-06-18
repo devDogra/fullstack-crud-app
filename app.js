@@ -32,4 +32,9 @@ async function main() {
 
 }
 
+app.use((err, req, res, next) => {
+    res.send(err.message); 
+    
+})
+
 main().then().catch(err => console.error(err));

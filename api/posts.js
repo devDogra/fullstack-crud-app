@@ -3,13 +3,24 @@ const mongoose = require('mongoose');
 const Post = mongoose.model('Post');
 
 router.get('/', async (req, res, next) => {
-    const posts = await Post.find();
-    res.json(posts);
+    try {
+        const posts = await Post.find();
+        res.json(posts);
+    } catch(err) {
+        res.json(err.message);
+    }
 })
 
 router.get('/:postId', async (req, res, next) => {
-    const post = await Post.findById(req.params.postId);
-    res.json(post);
+    if (!mongoose.isValidObjectId(req.params.postId)) return res.json();
+    
+    try {
+        const post = await Post.findById(req.params.postId);
+        res.json(post);
+    }
+    catch(err) {
+        res.json(err.message);
+    }
 })
 
 router.post('/', async (req, res, next) => {
@@ -19,6 +30,7 @@ router.post('/', async (req, res, next) => {
 })
 
 router.patch('/:postId', async (req, res, next) => {
+    if (!mongoose.isValidObjectId(req.params.postId)) return res.json();
     const data = req.body; 
     const post = await Post.findById(req.params.postId);
     const updatedPost = Object.assign(post, data);
@@ -26,6 +38,8 @@ router.patch('/:postId', async (req, res, next) => {
 })
 
 router.put('/:postId', async (req, res, next) => {
+    if (!mongoose.isValidObjectId(req.params.postId)) return res.json();
+
     const data = req.body; 
     const post = await Post.findById(req.params.postId);
     const updatedPost = Object.assign(post, data);
@@ -33,6 +47,8 @@ router.put('/:postId', async (req, res, next) => {
 })
 
 router.delete('/:postId', async (req, res, next) => {
+    if (!mongoose.isValidObjectId(req.params.postId)) return res.json();
+
     const id = req.params.postId; 
     const deletedPost = await Post.findByIdAndDelete(id);
     res.json(deletedPost);
