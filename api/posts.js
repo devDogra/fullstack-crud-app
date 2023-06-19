@@ -39,6 +39,7 @@ router.patch('/:postId', async (req, res, next) => {
     try {
         const post = await Post.findById(req.params.postId);
         const updatedPost = Object.assign(post, data);
+        updatedPost.save();
         res.json(updatedPost);
     } catch(err) {
         return next(err);
@@ -47,11 +48,18 @@ router.patch('/:postId', async (req, res, next) => {
 
 router.put('/:postId', async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.postId)) return res.json();
-
     const data = req.body; 
+
+    try {
+        await Post.validate(data);
+    } catch(err) {
+        return next(err);
+    }
+    
     try {
         const post = await Post.findById(req.params.postId);
         const updatedPost = Object.assign(post, data);
+        updatedPost.save();
         res.json(updatedPost);
     } catch(err) {
         return next(err);
