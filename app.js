@@ -37,6 +37,7 @@ app.use("/posts", APIroutes.posts);
 // auth routes
 app.use("/register", Authroutes.register);
 app.use("/login", Authroutes.login);
+app.use("/logout", Authroutes.logout);
 
 /* -------------------------------------------------------------------------- */
 // const axios = require('axios');
