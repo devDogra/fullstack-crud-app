@@ -1,13 +1,21 @@
 const express = require('express'); 
 const mongoose = require('mongoose');
+const session = require('express-session'); 
+
 const models = require('./models/Models.js'); 
 const APIroutes = require('./api/api.js'); 
 const Authroutes = require('./auth-routes/auth-routes.js'); 
+
 
 const port = 8443; 
 const dburi = 'mongodb://127.0.0.1:27017/ocean'
 
 app = express(); 
+app.use(session({
+    resave: false, 
+    saveUninitialised: false, 
+    secret: 'K23942873587'
+}))
 app.use(express.urlencoded({extended: true}));
 app.use(express.json({strict: false}));
 
