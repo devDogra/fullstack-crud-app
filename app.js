@@ -20,7 +20,20 @@ app.use(printPath);
 app.use('/users', APIroutes.users);
 app.use('/posts', APIroutes.posts);
 
+/* -------------------------------------------------------------------------- */
+const axios = require('axios'); 
 
+app.post('/register', async (req, res, next) => {
+    try {
+        const {data: createdUser} = await axios.post('http://127.0.0.1:8443/users', req.body);
+        console.log(createdUser); 
+        res.send(createdUser); 
+    } catch(err) {
+        return next(err); 
+    }
+})
+
+/* -------------------------------------------------------------------------- */
 
 async function main() {
 
