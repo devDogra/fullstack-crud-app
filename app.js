@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const models = require('./models/Models.js'); 
 const APIroutes = require('./api/api.js'); 
+const Authroutes = require('./auth-routes/auth-routes.js'); 
 
 const port = 8443; 
 const dburi = 'mongodb://127.0.0.1:27017/ocean'
@@ -20,18 +21,24 @@ app.use(printPath);
 app.use('/users', APIroutes.users);
 app.use('/posts', APIroutes.posts);
 
-/* -------------------------------------------------------------------------- */
-const axios = require('axios'); 
+// auth routes
+app.use('/register', Authroutes.register);
+app.use('/login', Authroutes.login); 
 
-app.post('/register', async (req, res, next) => {
-    try {
-        const {data: createdUser} = await axios.post('http://127.0.0.1:8443/users', req.body);
-        console.log(createdUser); 
-        res.send(createdUser); 
-    } catch(err) {
-        return next(err); 
-    }
-})
+/* -------------------------------------------------------------------------- */
+// const axios = require('axios'); 
+
+// app.post('/register', async (req, res, next) => {
+//     try {
+//         const {data: createdUser} = await axios.post('http://127.0.0.1:8443/users', req.body);
+//         console.log(createdUser); 
+//         res.send(createdUser); 
+//     } catch(err) {
+//         return next(err); 
+//     }
+// })
+/* -------------------------------------------------------------------------- */
+
 
 /* -------------------------------------------------------------------------- */
 
