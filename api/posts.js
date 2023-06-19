@@ -7,7 +7,7 @@ router.get('/', async (req, res, next) => {
         const posts = await Post.find();
         res.json(posts);
     } catch(err) {
-        res.json(err.message);
+        return next(err);
     }
 })
 
@@ -19,39 +19,55 @@ router.get('/:postId', async (req, res, next) => {
         res.json(post);
     }
     catch(err) {
-        res.json(err.message);
+        return next(err);
     }
 })
 
 router.post('/', async (req, res, next) => {
     const postData = req.body; 
-    const createdPost = await Post.create(postData);
-    res.json(createdPost);
+    try {
+        const createdPost = await Post.create(postData);
+        res.json(createdPost);
+    } catch(err) {
+        return next(err);
+    }
 })
 
 router.patch('/:postId', async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.postId)) return res.json();
     const data = req.body; 
-    const post = await Post.findById(req.params.postId);
-    const updatedPost = Object.assign(post, data);
-    res.json(updatedPost);
+    try {
+        const post = await Post.findById(req.params.postId);
+        const updatedPost = Object.assign(post, data);
+        res.json(updatedPost);
+    } catch(err) {
+        return next(err);
+    }
 })
 
 router.put('/:postId', async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.postId)) return res.json();
 
     const data = req.body; 
-    const post = await Post.findById(req.params.postId);
-    const updatedPost = Object.assign(post, data);
-    res.json(updatedPost);
+    try {
+        const post = await Post.findById(req.params.postId);
+        const updatedPost = Object.assign(post, data);
+        res.json(updatedPost);
+    } catch(err) {
+        return next(err);
+    }
 })
 
 router.delete('/:postId', async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.postId)) return res.json();
 
-    const id = req.params.postId; 
-    const deletedPost = await Post.findByIdAndDelete(id);
-    res.json(deletedPost);
+    try {
+        const id = req.params.postId; 
+        const deletedPost = await Post.findByIdAndDelete(id);
+        res.json(deletedPost);
+    } catch(err) {
+        return next(err);
+    }
 })
 
 module.exports = router; 

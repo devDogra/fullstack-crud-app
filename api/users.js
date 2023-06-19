@@ -10,41 +10,61 @@ router.get('/', async (req, res, next) => {
 router.get('/:userId', async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.userId)) return res.json();
 
-    const user = await User.findById(req.params.userId);
-    res.json(user);
+    try {
+        const user = await User.findById(req.params.userId);
+        res.json(user);
+    } catch (err) {
+        return next(err);
+    }
 })
 
 
 router.post('/', async (req, res, next) => {
     const userData = req.body; 
-    const createdUser = await User.create(userData);
-    res.json(createdUser);
+    try {
+        const createdUser = await User.create(userData);
+        res.json(createdUser);  
+    } catch (err) {
+        return next(err);   
+    }
 })
 
 router.patch('/:userId', async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.userId)) return res.json();
-
     const data = req.body; 
-    const user = await User.findById(req.params.userId);
-    const updatedUser = Object.assign(user, data);
-    res.json(updatedUser);
+    try {
+        const user = await User.findById(req.params.userId);
+        const updatedUser = Object.assign(user, data);
+        res.json(updatedUser);
+    } catch (err) {
+        return next(err);        
+    }
 })
 
 router.put('/:userId', async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.userId)) return res.json();
-
     const data = req.body; 
-    const user = await User.findById(req.params.userId);
-    const updatedUser = Object.assign(user, data);
-    res.json(updatedUser);
+
+    try {
+        const user = await User.findById(req.params.userId);
+        const updatedUser = Object.assign(user, data);
+        res.json(updatedUser);
+
+    } catch(err) {
+        return next(err);
+    }
 })
 
 router.delete('/:userId', async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.userId)) return res.json();
 
     const id = req.params.userId; 
-    const deletedUser = await User.findByIdAndDelete(id);
-    res.json(deletedUser);
+    try {
+        const deletedUser = await User.findByIdAndDelete(id);
+        res.json(deletedUser);
+    } catch(err) {
+        return next(err);
+    }
 })
 
 module.exports = router; 
