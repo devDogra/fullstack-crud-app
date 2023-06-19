@@ -35,6 +35,7 @@ router.patch('/:userId', async (req, res, next) => {
     try {
         const user = await User.findById(req.params.userId);
         const updatedUser = Object.assign(user, data);
+        await updatedUser.save();
         res.json(updatedUser);
     } catch (err) {
         return next(err);        
@@ -46,10 +47,16 @@ router.put('/:userId', async (req, res, next) => {
     const data = req.body; 
 
     try {
-        const user = await User.findById(req.params.userId);
-        const updatedUser = Object.assign(user, data);
-        res.json(updatedUser);
+        await User.validate(data); 
+    } catch(err) { 
+        return next(err);
+    }
 
+    try {
+        let user = await User.findById(req.params.userId);
+        user = Object.assign(user, ...data);
+        user.save();
+        res.json(user);
     } catch(err) {
         return next(err);
     }
