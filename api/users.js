@@ -29,6 +29,7 @@ router.post('/', async (req, res, next) => {
     }
 })
 
+// Working
 router.patch('/:userId', async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.userId)) return res.json();
     const data = req.body; 
@@ -54,7 +55,7 @@ router.put('/:userId', async (req, res, next) => {
 
     try {
         let user = await User.findById(req.params.userId);
-        user = Object.assign(user, ...data);
+        user = Object.assign(user, data);
         user.save();
         res.json(user);
     } catch(err) {
