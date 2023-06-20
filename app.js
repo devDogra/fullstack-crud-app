@@ -67,7 +67,8 @@ async function main() {
 
 // Error handler
 app.use((err, req, res, next) => {
-  res.send(err.message);
+  //   res.send("e");
+  res.send(err);
 });
 
 main()
