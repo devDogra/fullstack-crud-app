@@ -4,7 +4,7 @@ const passport = require("passport");
 
 const apiurl = "http://127.0.0.1:8443";
 
-router.post("/", passport.authenticate("local"), async (req, res, next) => {
+router.post("/", (req, res, next) => {
   if (req.isAuthenticated()) {
     req.logout(function (err) {
       if (err) return next(err);
