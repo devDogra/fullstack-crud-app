@@ -18,7 +18,7 @@ router.post("/", async (req, res, next) => {
     const url = apiurl + "/users";
     const { data: createdUser } = await axios.post(url, req.body);
     console.log(createdUser);
-    res.send(createdUser);
+    res.send({ message: "succesful", createdUser });
   } catch (err) {
     return next(err);
   }
