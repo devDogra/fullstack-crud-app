@@ -5,20 +5,16 @@ const passport = require("passport");
 const apiurl = "http://127.0.0.1:8443";
 
 router.post("/", async (req, res, next) => {
-  // do not allow regs while logged in
-  const isLoggedIn = req.user ? true : false;
-  console.log({
-    page: "register",
-    isLoggedIn,
-  });
-  if (isLoggedIn) {
-    return res.send("logged in users cannot register");
+  if (req.isAuthenticated()) {
+    return res
+      .status(403)
+      .json({ error: "Logged in users are not allowed to register" });
   }
+
   try {
     const url = apiurl + "/users";
     const { data: createdUser } = await axios.post(url, req.body);
-    console.log(createdUser);
-    res.send("succesful");
+    return res.status(201).json({ message: "User registered successfully." });
   } catch (err) {
     return next(err);
   }
