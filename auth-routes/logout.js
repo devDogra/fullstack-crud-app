@@ -8,7 +8,7 @@ router.post("/", (req, res, next) => {
   if (req.isAuthenticated()) {
     req.logout(function (err) {
       if (err) return next(err);
-      res.status(200).json({ message: "Logout successful." });
+      res.status(200).json({ message: "Success" });
     });
   } else {
     return res.status(200).json({ message: "User is already logged out." });

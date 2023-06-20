@@ -10,26 +10,13 @@ function checkLoggedIn(req, res, next) {
   }
   return res.send("not logged in");
 }
-// Expose this GET endpoint for just checking if logged in
+// Expose this GET endpoint for just checking if logged in. For testing only.
 router.get("/", checkLoggedIn);
-function getAuthChecker(onLoggedIn, onLoggedOut) {
-  return function authChecker(req, res, next) {
-    if (req.isAuthenticated()) {
-      return onLoggedIn();
-    }
-    return onLoggedOut();
-  };
-}
-
-getAuthChecker(
-  () => res.send("already logged in"),
-  () => res.send("not logged in")
-);
 
 // But before authenticating, if a logged in user is POSTing, I want to deal with this
 function proceedIfLoggedOut(req, res, next) {
   if (req.isAuthenticated()) {
-    return res.send("successful");
+    return res.status(401).send("User is already logged in");
   }
   return next();
 }
@@ -41,20 +28,17 @@ router.post(
   async (req, res, next) => {
     // Passport will set req.user to the authenticated user on succesful authentication
     const authSuccesful = req.user ? true : false;
-    console.log({
-      page: "login",
-      authSuccesful,
-    });
 
     if (authSuccesful) {
       try {
         const url = apiurl + "/users";
         res.send("succesful");
+        res.status(200).json({ message: "Success" });
       } catch (err) {
         return next(err);
       }
     } else {
-      res.send("not succesful");
+      res.status(401).json({ error: "Login failed" });
     }
   }
 );

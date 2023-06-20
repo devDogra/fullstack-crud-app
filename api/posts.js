@@ -37,7 +37,7 @@ router.post("/", ensureAuthenticated, async (req, res, next) => {
   const postData = req.body;
   try {
     const createdPost = await Post.create(postData);
-    res.status(201).json({ createdPost, message: "Post created succesfully" });
+    res.status(201).json({ createdPost, message: "Success" });
   } catch (err) {
     return next(err);
   }
@@ -50,7 +50,7 @@ router.patch("/:postId", ensureAuthenticated, async (req, res, next) => {
     const post = await Post.findById(req.params.postId);
     const updatedPost = Object.assign(post, data);
     updatedPost.save();
-    res.status(200).json({ updatedPost, message: "Post updated succesfully" });
+    res.status(200).json({ updatedPost, message: "Success" });
   } catch (err) {
     return next(err);
   }
@@ -70,7 +70,7 @@ router.put("/:postId", ensureAuthenticated, async (req, res, next) => {
     const post = await Post.findById(req.params.postId);
     const updatedPost = Object.assign(post, data);
     updatedPost.save();
-    res.status(200).json({ updatedPost, message: "Post updated succesfully" });
+    res.status(200).json({ updatedPost, message: "Success" });
   } catch (err) {
     return next(err);
   }
@@ -83,7 +83,7 @@ router.delete("/:postId", ensureAuthenticated, async (req, res, next) => {
     const id = req.params.postId;
     const deletedPost = await Post.findByIdAndDelete(id);
     res.json(deletedPost);
-    res.status(200).json({ deletedPost, message: "Post deleted succesfully" });
+    res.status(200).json({ deletedPost, message: "Success" });
   } catch (err) {
     return next(err);
   }

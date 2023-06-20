@@ -39,9 +39,7 @@ router.post("/", async (req, res, next) => {
   const userData = req.body;
   try {
     const createdUser = await User.create(userData);
-    res
-      .status(201)
-      .json({ createdUser, message: "User created successfully." });
+    res.status(201).json({ createdUser, message: "Success" });
   } catch (err) {
     return next(err);
   }
@@ -55,9 +53,7 @@ router.patch("/:userId", ensureAuthenticated, async (req, res, next) => {
     const user = await User.findById(req.params.userId);
     const updatedUser = Object.assign(user, data);
     await updatedUser.save();
-    res
-      .status(200)
-      .json({ updatedUser, message: "User updated successfully." });
+    res.status(200).json({ updatedUser, message: "Success" });
   } catch (err) {
     return next(err);
   }
@@ -77,9 +73,7 @@ router.put("/:userId", ensureAuthenticated, async (req, res, next) => {
     let user = await User.findById(req.params.userId);
     user = Object.assign(user, data);
     user.save();
-    res
-      .status(200)
-      .json({ updatedUser, message: "User updated successfully." });
+    res.status(200).json({ updatedUser, message: "Success" });
   } catch (err) {
     return next(err);
   }
@@ -91,7 +85,7 @@ router.delete("/:userId", ensureAuthenticated, async (req, res, next) => {
   const id = req.params.userId;
   try {
     const deletedUser = await User.findByIdAndDelete(id);
-    res.status(200).json({ deletedUser, message: "User deleted succesfully" });
+    res.status(200).json({ deletedUser, message: "Success" });
   } catch (err) {
     return next(err);
   }
