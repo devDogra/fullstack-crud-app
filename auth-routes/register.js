@@ -12,7 +12,7 @@ router.post("/", async (req, res, next) => {
     isLoggedIn,
   });
   if (isLoggedIn) {
-    return res.send("Logged in users cannot register");
+    return res.send({ message: "Logged in users cannot register" });
   }
   try {
     const url = apiurl + "/users";
