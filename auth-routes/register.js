@@ -12,13 +12,13 @@ router.post("/", async (req, res, next) => {
     isLoggedIn,
   });
   if (isLoggedIn) {
-    return res.send({ message: "Logged in users cannot register" });
+    return res.send("logged in users cannot register");
   }
   try {
     const url = apiurl + "/users";
     const { data: createdUser } = await axios.post(url, req.body);
     console.log(createdUser);
-    res.send({ message: "succesful", createdUser });
+    res.send("succesful");
   } catch (err) {
     return next(err);
   }
