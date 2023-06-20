@@ -32,7 +32,6 @@ router.post(
     if (authSuccesful) {
       try {
         const url = apiurl + "/users";
-        res.send("succesful");
         res.status(200).json({ message: "Success" });
       } catch (err) {
         return next(err);
