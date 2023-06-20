@@ -7,6 +7,10 @@ const apiurl = "http://127.0.0.1:8443";
 router.post("/", async (req, res, next) => {
   // do not allow regs while logged in
   const isLoggedIn = req.user ? true : false;
+  console.log({
+    page: "register",
+    isLoggedIn,
+  });
   if (isLoggedIn) {
     return res.send("Logged in users cannot register");
   }

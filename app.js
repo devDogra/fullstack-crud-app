@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 // const passport = require("passport");
 const passport = require("./auth-routes/passport");
+const cors = require("cors");
 
 const models = require("./models/Models.js");
 const APIroutes = require("./api/api.js");
@@ -12,6 +13,7 @@ const port = 8443;
 const dburi = "mongodb://127.0.0.1:27017/ocean";
 
 app = express();
+app.use(cors());
 app.use(
   session({
     resave: false,
