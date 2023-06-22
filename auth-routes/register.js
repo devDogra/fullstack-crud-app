@@ -5,7 +5,8 @@ const passport = require("passport");
 const apiurl = "http://127.0.0.1:8443";
 
 router.post("/", async (req, res, next) => {
-  if (req.isAuthenticated()) {
+  const isAuthenticated = false;
+  if (isAuthenticated) {
     return res
       .status(403)
       .json({ error: "Logged in users are not allowed to register" });

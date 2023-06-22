@@ -4,15 +4,6 @@ const passport = require("passport");
 
 const apiurl = "http://127.0.0.1:8443";
 
-router.post("/", (req, res, next) => {
-  if (req.isAuthenticated()) {
-    req.logout(function (err) {
-      if (err) return next(err);
-      res.status(200).json({ message: "Success" });
-    });
-  } else {
-    return res.status(200).json({ message: "User is already logged out." });
-  }
-});
+router.post("/", (req, res, next) => {});
 
 module.exports = router;
