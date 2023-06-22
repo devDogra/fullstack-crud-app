@@ -5,6 +5,11 @@ const cors = require("cors");
 const models = require("./models/Models.js");
 const APIroutes = require("./api/api.js");
 const Authroutes = require("./auth-routes/auth-routes.js");
+const passport = require("passport");
+const configurePassport = require("./auth-routes/passport.config.js");
+
+const secretKey = require("./auth-routes/keys.js").secret;
+configurePassport(secretKey);
 
 const port = 8443;
 const dburi = "mongodb://127.0.0.1:27017/ocean";
