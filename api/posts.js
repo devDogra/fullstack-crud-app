@@ -6,12 +6,7 @@ const Post = mongoose.model("Post");
 // Dont need to authenticate users here, just need to make sure
 // they ARE authenticated
 function ensureAuthenticated(req, res, next) {
-  const isAuthenticated = true;
-  if (isAuthenticated) {
-    return next();
-  } else {
-    return res.status(403).json({ error: "User not authenticated" });
-  }
+  passport.authenticate("jwt", { session: false })(req, res, next);
 }
 
 router.get("/", ensureAuthenticated, async (req, res, next) => {
