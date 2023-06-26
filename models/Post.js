@@ -7,7 +7,7 @@ const maxContentLength = 256;
 const maxTitleLength = 64;
 
 const PostSchema = new Schema({
-  title: { type: String, required: true, maxLength: maxTitleLength },
+  title: { type: String, maxLength: maxTitleLength },
   author: { type: mongoose.ObjectId, ref: User },
   content: { type: String, required: true, maxLength: maxContentLength },
   weight: { type: Number, default: initialWeight },
