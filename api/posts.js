@@ -11,7 +11,7 @@ function ensureAuthenticated(req, res, next) {
 
 router.get("/", ensureAuthenticated, async (req, res, next) => {
   try {
-    const posts = await Post.find();
+    const posts = await Post.find().populate("author");
     res.status(200).json(posts);
   } catch (err) {
     return next(err);
@@ -22,7 +22,7 @@ router.get("/:postId", ensureAuthenticated, async (req, res, next) => {
   if (!mongoose.isValidObjectId(req.params.postId)) return res.json();
 
   try {
-    const post = await Post.findById(req.params.postId);
+    const post = await Post.findById(req.params.postId).populate("author");
     res.status(200).json(post);
   } catch (err) {
     return next(err);
