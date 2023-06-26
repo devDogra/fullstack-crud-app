@@ -14,7 +14,7 @@ function configurePassport(SECRET_KEY) {
   async function verify(req, jwt_payload, done) {
     const id = jwt_payload.sub;
     try {
-      const user = User.findById(id);
+      const user = await User.findById(id);
       if (!user) return done(null, false);
 
       // Make the user available on req
