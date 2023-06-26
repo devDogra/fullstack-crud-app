@@ -9,12 +9,18 @@ function configurePassport(SECRET_KEY) {
   const opts = {};
   opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
   opts.secretOrKey = SECRET_KEY;
+  opts.passReqToCallback = true;
 
-  async function verify(jwt_payload, done) {
+  async function verify(req, jwt_payload, done) {
     const id = jwt_payload.sub;
     try {
       const user = User.findById(id);
       if (!user) return done(null, false);
+
+      // Make the user available on req
+      // Now any route that has the passport.authenticate("jwt", {session: false})
+      // middleware will receive req.user upon successful authentication.
+      req.user = user;
       return done(null, user);
     } catch (err) {
       return done(err);
