@@ -2,11 +2,16 @@ const router = require("express").Router();
 const axios = require("axios");
 const passport = require("passport");
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const secretKey = require("./keys.js").secret;
 const jwt = require("jsonwebtoken");
 const User = mongoose.model("User");
 
 const apiurl = "http://127.0.0.1:8443";
+
+function checkPasswordsMatch(submittedPassword, hashedPassword) {
+  return bcrypt.compare(submittedPassword, hashedPassword);
+}
 
 function checkLoggedIn(req, res, next) {
   return next();
@@ -28,8 +33,8 @@ router.post("/", async (req, res, next) => {
       return res
         .status(401)
         .json({ error: "No account associated with this email" });
-    if (user.password !== password)
-      return res.status(401).json({ error: "Invalid password" });
+
+    if ((await checkPasswordsMatch(password, user.password)) == false) return res.status(401).json({ error: "Invalid password" });
 
     // Valid credentials, send a JWT
     // No need to send the whole user, only the id is fine. Plus this is what we assume in the setup in config of passport anyway
