@@ -10,12 +10,37 @@ function ensureAuthenticated(req, res, next) {
   passport.authenticate("jwt", { session: false })(req, res, next);
 }
 
-router.get("/", ensureAuthenticated, async (req, res, next) => {
+function ensureCanGetOrModifyUser(req, res, next) {
+  console.log("ensuring can get or modify user");
+  const usrIdToGet = req.params.userId; 
+  const usrIdMakingRequest = req.user._id; 
+  if (!canGetOrModifyUser(usrIdMakingRequest, usrIdToGet)) return res.status(403).json({error: "Not authorised"});
+  return next(); 
+}
+// A user can get or modify his user only
+function canGetOrModifyUser(userIdMakingRequest, userIdToGet) {
+  if (userIdMakingRequest.toString() === userIdToGet) return true; 
+  return false; 
+}
+/* -------------------------------------------------------------------------- */
+// For now, do not let anyone get all users, since there are no admins
+function ensureAdmin(req, res, next) {
+  if (!isAdmin(req.user)) return res.status(403).json({error: "Not authorized"});
+  return next();
+}
+
+function isAdmin() {
+  return false; 
+}
+/* -------------------------------------------------------------------------- */
+
+
+router.get("/", ensureAuthenticated, ensureAdmin, async (req, res, next) => {
   const users = await User.find();
   res.status(200).json(users);
 });
 
-router.get("/:userId", ensureAuthenticated, async (req, res, next) => {
+router.get("/:userId", ensureAuthenticated, ensureCanGetOrModifyUser, async (req, res, next) => {
   if (!mongoose.isValidObjectId(req.params.userId)) {
     return res.status(400).json({ error: "Invalid ID" });
   }
@@ -42,7 +67,7 @@ router.post("/", async (req, res, next) => {
 });
 
 // Working
-router.patch("/:userId", ensureAuthenticated, async (req, res, next) => {
+router.patch("/:userId", ensureAuthenticated, ensureCanGetOrModifyUser, async (req, res, next) => {
   if (!mongoose.isValidObjectId(req.params.userId)) return res.json();
   const data = req.body;
   try {
@@ -55,7 +80,7 @@ router.patch("/:userId", ensureAuthenticated, async (req, res, next) => {
   }
 });
 
-router.put("/:userId", ensureAuthenticated, async (req, res, next) => {
+router.put("/:userId", ensureAuthenticated, ensureCanGetOrModifyUser, async (req, res, next) => {
   if (!mongoose.isValidObjectId(req.params.userId)) return res.json();
   const data = req.body;
 
@@ -75,7 +100,7 @@ router.put("/:userId", ensureAuthenticated, async (req, res, next) => {
   }
 });
 
-router.delete("/:userId", ensureAuthenticated, async (req, res, next) => {
+router.delete("/:userId", ensureAuthenticated, ensureCanGetOrModifyUser, async (req, res, next) => {
   if (!mongoose.isValidObjectId(req.params.userId)) return res.json();
 
   const id = req.params.userId;
