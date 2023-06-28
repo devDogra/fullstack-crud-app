@@ -1,8 +1,10 @@
 const router = require("express").Router();
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
+const bcrypt = require("bcrypt");
 
 const passport = require("passport");
+const { saltRounds } = require("../fakeEnvVars");
 
 // Dont need to authenticate users here, just need to make sure
 // they ARE authenticated
@@ -54,12 +56,17 @@ router.get("/:userId", ensureAuthenticated, ensureCanGetOrModifyUser, async (req
   }
 });
 
+function getHashedPassword(password) {
+  return bcrypt.hash(password, saltRounds);
+}
 // Dont need to ensure authenticated here cuz new users MUST
 // be able to register accounts
 router.post("/", async (req, res, next) => {
   const userData = req.body;
   try {
-    const createdUser = await User.create(userData);
+    const hashedPassword = await getHashedPassword(userData.password);
+    const userToCreate = {...userData, password: hashedPassword};
+    const createdUser = await User.create(userToCreate);
     res.status(201).json({ createdUser, message: "Success" });
   } catch (err) {
     return next(err);
