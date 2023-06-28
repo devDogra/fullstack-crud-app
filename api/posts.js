@@ -56,7 +56,7 @@ function ensureAuthenticated(req, res, next) {
 
 router.get("/", ensureAuthenticated, async (req, res, next) => {
   try {
-    const posts = await Post.find().populate("author");
+    const posts = await Post.find().populate("author", {username: 1, _id: 1});
     res.status(200).json(posts);
   } catch (err) {
     return next(err);
@@ -66,7 +66,11 @@ router.get("/", ensureAuthenticated, async (req, res, next) => {
 router.get("/:postId", setPostOnReq, ensureAuthenticated, (req, res, next) => {
   const post = req.post;
   if (!post) return res.status(404).json({ error: "Post not found" });
-  res.status(200).json(post);
+
+  const {author: {password, email, __v, ...authorToSend}, ...postToSend} = post.toObject();
+  postToSend.author = authorToSend;
+
+  res.status(200).json(postToSend);
 });
 
 router.post("/", ensureAuthenticated, ensureCanCreatePost, async (req, res, next) => {
