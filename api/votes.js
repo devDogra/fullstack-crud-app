@@ -39,28 +39,22 @@ router.post('/', async (req, res, next) => {
     }
 })
 
+// Only allow the updation of the value of the vote
 router.put('/:voteId', async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.voteId)) {
         return res.status(404).json({error: "Invalid ID"});
     }
-    const data = req.body; 
-    
-    try {
-        await Vote.validate(data);
-    } catch(err) {
-        return next(err);
+    const {value} = req.body; 
+
+    const allowedValues = Vote.schema.path('value').options.enum; 
+    if (!allowedValues.includes(value)) {
+        return res.status(400).json({error: "Invalid vote value"});
     }
     
     try {
-        // const vote = await Vote.findById(req.params.voteId); 
-        // console.log(vote);
-        // console.log(data);
-        // const updatedVote = Object.assign(vote, data);
-        // Do not want to save, will make it go thru the pre hook validation which we do not want
-        // await updatedVote.save();
-        const updatedVote = await Vote.findByIdAndUpdate(req.params.voteId, data);
-        // await updatedVote.save({ validateBeforeSave: false });
-        res.status(200).json({ updatedVote, message: "Success" });
+        const vote = await Vote.findByIdAndUpdate(req.params.voteId, {value}); 
+        if (!vote) throw new Error("Could not find Vote"); 
+        res.status(200).json({ vote, message: "Success" });
     } catch(err) {
         return next(err); 
     }
