@@ -10,7 +10,7 @@ const PostSchema = new Schema({
   title: { type: String, maxLength: maxTitleLength },
   author: { type: Schema.Types.ObjectId, ref: mongoose.model('User') },
   content: { type: String, required: true, maxLength: maxContentLength },
-  votes: [VoteSchema]
+  votes: { type: [VoteSchema], default: []}
 });
 
 
