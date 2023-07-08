@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const User = require("./User");
+const VoteSchema = require("./Vote");
 const Schema = mongoose.Schema;
 
 const initialWeight = 1000;
@@ -8,11 +8,10 @@ const maxTitleLength = 64;
 
 const PostSchema = new Schema({
   title: { type: String, maxLength: maxTitleLength },
-  author: { type: Schema.Types.ObjectId, ref: User },
+  author: { type: Schema.Types.ObjectId, ref: mongoose.model('User') },
   content: { type: String, required: true, maxLength: maxContentLength },
-  weight: { type: Number, default: initialWeight },
+  votes: [VoteSchema]
 });
 
-const Post = mongoose.model("Post", PostSchema);
 
-module.exports = Post;
+module.exports = PostSchema;

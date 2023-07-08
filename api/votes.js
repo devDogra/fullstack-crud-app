@@ -39,7 +39,7 @@ router.post('/', async (req, res, next) => {
     }
 })
 
-// Only allow the updation of the value of the vote
+// Only allow the value of the vote to be updated
 router.put('/:voteId', async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.voteId)) {
         return res.status(404).json({error: "Invalid ID"});

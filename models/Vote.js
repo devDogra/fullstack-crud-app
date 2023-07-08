@@ -1,20 +1,18 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema; 
 
-// const {User, Post} = require("./Models.js");
-const User = require("./User.js"); 
-const Post = require("./Post.js"); 
-
 const DOWNVOTE = -1;
 const UPVOTE = +1;
 
 const VoteSchema = new Schema({
-    user: { type: Schema.Types.ObjectId, ref: User, unique: false},
-    post: { type: Schema.Types.ObjectId, ref: Post, unique: false},
+    user: { type: Schema.Types.ObjectId, ref: mongoose.model('User')},
+    // post: { type: Schema.Types.ObjectId, ref: mongoose.model('Post')},
+    post: { type: Schema.Types.ObjectId },
     value: { type: Number, enum: [DOWNVOTE, UPVOTE]}
 })
 
 // A vote can only be by 1 user on 1 post
+// unique_together(user, post):
 VoteSchema.pre('save', async function(next) {
     const vote = this;
     let {user, post} = vote; 
@@ -29,5 +27,4 @@ VoteSchema.pre('save', async function(next) {
 })
 
 
-const Vote = mongoose.model('Vote', VoteSchema); 
-module.exports = Vote; 
+module.exports = VoteSchema; 
