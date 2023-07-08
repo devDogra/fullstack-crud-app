@@ -28,6 +28,7 @@ app.use(printPath);
 // API Routes
 app.use("/users", APIroutes.users);
 app.use("/posts", APIroutes.posts);
+app.use("/votes", APIroutes.votes); 
 
 // auth routes
 app.use("/register", Authroutes.register);
