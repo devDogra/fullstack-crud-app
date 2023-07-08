@@ -39,4 +39,30 @@ router.post('/', async (req, res, next) => {
     }
 })
 
+router.put('/:voteId', async (req, res, next) => {
+    if (!mongoose.isValidObjectId(req.params.voteId)) {
+        return res.status(404).json({error: "Invalid ID"});
+    }
+    const data = req.body; 
+    
+    try {
+        await Vote.validate(data);
+    } catch(err) {
+        return next(err);
+    }
+    
+    try {
+        const vote = await Vote.findById(req.params.voteId); 
+        console.log(vote);
+        console.log(data);
+        const updatedVote = Object.assign(vote, data);
+        // Do not want to save, will make it go thru the pre hook validation which we do not want
+        // await updatedVote.save();
+        await Vote.findByIdAndUpdate(req.params.voteId, updatedVote);
+        res.status(200).json({ updatedVote, message: "Success" });
+    } catch(err) {
+        return next(err); 
+    }
+})
+
 module.exports = router; 
