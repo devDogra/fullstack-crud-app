@@ -2,6 +2,9 @@ const router = require('express').Router();
 const mongoose = require('mongoose'); 
 const Vote = mongoose.model('Vote'); 
 
+console.log("VOTE MODEL");
+console.log(Vote); 
+
 // EVENTUALLY: We do not want everyone/every usr to see who liked what, right?
 router.get('/', async (req, res, next) => {
     try {
@@ -29,6 +32,7 @@ router.post('/', async (req, res, next) => {
 
     try {
         const vote = new Vote({user, post, value});
+        console.log("vote");
         console.log(vote);
         await vote.save(); 
         res.status(201).json({message: "Vote created succesfully"});
@@ -60,9 +64,23 @@ router.put('/:voteId', async (req, res, next) => {
     }
 })
 
-router.patch(':/voteId', async (req, res, next) => {
-    const data = req.body; 
-    // const 
-})
+router.patch('/:voteId', async (req, res, next) => {
+    if (!mongoose.isValidObjectId(req.params.voteId)) {
+        return res.status(404).json({error: "Invalid ID"});
+    }
+    const {value} = req.body; 
 
+    const allowedValues = Vote.schema.path('value').options.enum; 
+    if (!allowedValues.includes(value)) {
+        return res.status(400).json({error: "Invalid vote value"});
+    }
+    
+    try {
+        const vote = await Vote.findByIdAndUpdate(req.params.voteId, {value}); 
+        if (!vote) throw new Error("Could not find Vote"); 
+        res.status(200).json({ vote, message: "Success" });
+    } catch(err) {
+        return next(err); 
+    }
+})
 module.exports = router; 

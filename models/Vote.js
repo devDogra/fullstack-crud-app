@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema; 
-
 const DOWNVOTE = -1;
 const UPVOTE = +1;
 
@@ -15,6 +14,7 @@ const VoteSchema = new Schema({
 // unique_together(user, post):
 VoteSchema.pre('save', async function(next) {
     const vote = this;
+    const Vote = this.constructor;
     let {user, post} = vote; 
     user = user.toString(); 
     post = post.toString();
