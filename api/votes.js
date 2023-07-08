@@ -4,13 +4,21 @@ const Vote = mongoose.model('Vote');
 
 // EVENTUALLY: We do not want everyone/every usr to see who liked what, right?
 router.get('/', async (req, res, next) => {
-    const votes = await Vote.find();
-    res.send(votes);
+    try {
+        const votes = await Vote.find();
+        res.send(votes);
+    } catch(err) {
+        return next(err);
+    }
 })
 
 router.get('/:voteId', async (req, res, next) => {
-    const vote = await Vote.find();
-    res.send(vote);
+    try {
+        const vote = await Vote.find();
+        res.send(vote);
+    } catch(err) {
+        return next(err); 
+    }
 })
 
 router.post('/', async (req, res, next) => {
