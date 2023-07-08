@@ -52,17 +52,23 @@ router.put('/:voteId', async (req, res, next) => {
     }
     
     try {
-        const vote = await Vote.findById(req.params.voteId); 
-        console.log(vote);
-        console.log(data);
-        const updatedVote = Object.assign(vote, data);
+        // const vote = await Vote.findById(req.params.voteId); 
+        // console.log(vote);
+        // console.log(data);
+        // const updatedVote = Object.assign(vote, data);
         // Do not want to save, will make it go thru the pre hook validation which we do not want
         // await updatedVote.save();
-        await Vote.findByIdAndUpdate(req.params.voteId, updatedVote);
+        const updatedVote = await Vote.findByIdAndUpdate(req.params.voteId, data);
+        // await updatedVote.save({ validateBeforeSave: false });
         res.status(200).json({ updatedVote, message: "Success" });
     } catch(err) {
         return next(err); 
     }
+})
+
+router.patch(':/voteId', async (req, res, next) => {
+    const data = req.body; 
+    // const 
 })
 
 module.exports = router; 
