@@ -5,12 +5,13 @@ const Schema = mongoose.Schema;
 const User = require("./User.js"); 
 const Post = require("./Post.js"); 
 
-const [DOWNVOTE, NOVOTE, UPVOTE] = [-1, 0, +1];
+const DOWNVOTE = -1;
+const UPVOTE = +1;
 
 const VoteSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: User, unique: false},
     post: { type: Schema.Types.ObjectId, ref: Post, unique: false},
-    value: { type: Number, enum: [DOWNVOTE, NOVOTE, UPVOTE]}
+    value: { type: Number, enum: [DOWNVOTE, UPVOTE]}
 })
 
 // A vote can only be by 1 user on 1 post
