@@ -25,11 +25,25 @@ function ensureCanCreateVote(req, res, next) {
         // User is trying to create a Vote in another user's name
         return res.status(401).json({error: "Users cannot create Votes in other users' name"})
     }
+
     console.log({user, vote}); 
+    
     next();
 }
-
+async function setVoteOnRequest(req, res, next) {
+    const voteId = req.params.voteId; 
+    if (!mongoose.isValidObjectId(voteId)) return next();
+    try {
+        const vote = await Vote.findById(voteId);
+        req.vote = vote; 
+        next();
+    } catch(err) {
+        return next(err);
+    }
+}
 function ensureCanGetVote(req, res, next) {
+    const user = req.user; 
+
     next();
 }
 function ensureCanUpdateVote(req, res, next) {
