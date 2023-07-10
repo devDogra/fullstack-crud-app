@@ -17,7 +17,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:voteId', async (req, res, next) => {
     try {
-        const vote = await Vote.find();
+        const vote = await Vote.findById(req.params.voteId);
         res.send(vote);
     } catch(err) {
         return next(err); 
