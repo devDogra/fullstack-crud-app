@@ -56,7 +56,7 @@ router.put('/:voteId', async (req, res, next) => {
     }
     
     try {
-        const vote = await Vote.findByIdAndUpdate(req.params.voteId, {value}); 
+        const vote = await Vote.findByIdAndUpdate(req.params.voteId, {value}, {new: true}); 
         if (!vote) throw new Error("Could not find Vote"); 
         res.status(200).json({ vote, message: "Success" });
     } catch(err) {
@@ -76,7 +76,7 @@ router.patch('/:voteId', async (req, res, next) => {
     }
     
     try {
-        const vote = await Vote.findByIdAndUpdate(req.params.voteId, {value}); 
+        const vote = await Vote.findByIdAndUpdate(req.params.voteId, {value}, {new: true}); 
         if (!vote) throw new Error("Could not find Vote"); 
         res.status(200).json({ vote, message: "Success" });
     } catch(err) {
