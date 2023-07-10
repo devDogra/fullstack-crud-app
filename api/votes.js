@@ -41,8 +41,14 @@ async function setVoteOnRequest(req, res, next) {
         return next(err);
     }
 }
+// RN: A user can only get his votes
 function ensureCanGetVote(req, res, next) {
     const user = req.user; 
+    const vote = req.vote; 
+    console.log(vote, user);
+    if (user._id.toString() !== vote.user._id.toString()) {
+        return res.status(403).send({error: "Users can only get their Votes"});
+    }
 
     next();
 }
@@ -51,6 +57,7 @@ function ensureCanUpdateVote(req, res, next) {
 }
 
 // EVENTUALLY: We do not want everyone/every usr to see who liked what, right?
+
 router.get('/', ensureAuthenticated, ensureCanGetVote, async (req, res, next) => {
     try {
         const votes = await Vote.find();
@@ -60,7 +67,7 @@ router.get('/', ensureAuthenticated, ensureCanGetVote, async (req, res, next) =>
     }
 })
 
-router.get('/:voteId', ensureAuthenticated, ensureCanGetVote, async (req, res, next) => {
+router.get('/:voteId', ensureAuthenticated, setVoteOnRequest, ensureCanGetVote, async (req, res, next) => {
     try {
         const vote = await Vote.findById(req.params.voteId);
         res.send(vote);
