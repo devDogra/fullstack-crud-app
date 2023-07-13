@@ -56,11 +56,28 @@ function ensureCanUpdateVote(req, res, next) {
     next();
 }
 
-// EVENTUALLY: We do not want everyone/every usr to see who liked what, right?
+function ensureCanGetVotesOfUser(req, res, next) {
+    // For now, if no query, then assume user trying to get his own votes
+    const votesOwnerUserId = req.query.user || req.user._id.toString(); 
+    const reqSenderUserId = req.user._id.toString();
+    // Normal users can only get their own votes
+    if (reqSenderUserId != votesOwnerUserId) {
+        return res.status(403).send({error: "Users can only get their Votes"});
+    }
+    next();
+}
 
-router.get('/', ensureAuthenticated, ensureCanGetVote, async (req, res, next) => {
+// EVENTUALLY: We do not want everyone/every usr to see who liked what, right?
+// REQ: /votes?user=:userId
+// If No user query param, then trying to get ALL votes, which is forbidden. Should only be available to admins. 
+// BUT: Will require pagination if we're to scale 
+router.get('/', ensureAuthenticated, ensureCanGetVotesOfUser, async (req, res, next) => {
     try {
-        const votes = await Vote.find();
+        // For now, if no query, then assume user trying to get his own votes
+        const queryUserId = req.query.user || req.user._id.toString();
+        const votes = await Vote.find({
+            user: queryUserId
+        });
         res.send(votes);
     } catch(err) {
         return next(err);
@@ -101,7 +118,7 @@ router.put('/:voteId', ensureAuthenticated, ensureCanUpdateVote, async (req, res
         return res.status(404).json({error: "Invalid ID"});
     }
     const {value} = req.body; 
-
+    
     const allowedValues = Vote.schema.path('value').options.enum; 
     if (!allowedValues.includes(value)) {
         return res.status(400).json({error: "Invalid vote value"});
@@ -116,6 +133,8 @@ router.put('/:voteId', ensureAuthenticated, ensureCanUpdateVote, async (req, res
     }
 })
 
+// Only allow the value of the vote to be updated
+// Same as put
 router.patch('/:voteId', ensureAuthenticated, ensureCanUpdateVote, async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.voteId)) {
         return res.status(404).json({error: "Invalid ID"});
