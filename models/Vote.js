@@ -14,6 +14,8 @@ const VoteSchema = new Schema({
 // unique_together(user, post):
 VoteSchema.pre('save', async function(next) {
     const vote = this;
+    const skip = vote.$locals.skipPreSaveValidation;
+    if (skip) return next();
     const Vote = this.constructor;
     let {user, post} = vote; 
     user = user.toString(); 

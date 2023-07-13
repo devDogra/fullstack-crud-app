@@ -125,8 +125,14 @@ router.put('/:voteId', ensureAuthenticated, ensureCanUpdateVote, async (req, res
     }
     
     try {
-        const vote = await Vote.findByIdAndUpdate(req.params.voteId, {value}, {new: true}); 
+        // Not doing .save cuz triggers schema validation in pre hook, which would throw an error because the newVote is just { value: value }, when findByIdAndUpdate is performing a partial update
+        // const vote = await Vote.findByIdAndUpdate(req.params.voteId, {value}, {new: true}); 
+        const vote = await Vote.findById(req.params.voteId);
         if (!vote) throw new Error("Could not find Vote"); 
+        vote.value = value;
+        vote.$locals.skipPreSaveValidation = true; 
+        console.log({vote}); 
+        vote.save();
         res.status(200).json({ vote, message: "Success" });
     } catch(err) {
         return next(err); 
