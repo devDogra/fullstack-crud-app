@@ -147,23 +147,30 @@ router.put('/:voteId', ensureAuthenticated, setVoteOnRequest, ensureCanUpdateVot
 
 // Only allow the value of the vote to be updated
 // Same as put
-router.patch('/:voteId', ensureAuthenticated, ensureCanUpdateVote, async (req, res, next) => {
+router.patch('/:voteId', ensureAuthenticated, setVoteOnRequest, ensureCanUpdateVote, async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.voteId)) {
         return res.status(404).json({error: "Invalid ID"});
     }
     const {value} = req.body; 
-
+    
     const allowedValues = Vote.schema.path('value').options.enum; 
     if (!allowedValues.includes(value)) {
         return res.status(400).json({error: "Invalid vote value"});
     }
     
     try {
-        const vote = await Vote.findByIdAndUpdate(req.params.voteId, {value}, {new: true}); 
+        // Not doing .save cuz triggers schema validation in pre hook, which would throw an error because the newVote is just { value: value }, when findByIdAndUpdate is performing a partial update
+        // const vote = await Vote.findByIdAndUpdate(req.params.voteId, {value}, {new: true}); 
+        // const vote = await Vote.findById(req.params.voteId);
+        const vote = req.vote; 
         if (!vote) throw new Error("Could not find Vote"); 
+        vote.value = value;
+        vote.$locals.skipPreSaveValidation = true; 
+        vote.save();
         res.status(200).json({ vote, message: "Success" });
     } catch(err) {
         return next(err); 
     }
 })
+
 module.exports = router; 
