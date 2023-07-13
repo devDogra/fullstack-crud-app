@@ -6,6 +6,13 @@ const Vote = mongoose.model('Vote');
 console.log("VOTE MODEL");
 console.log(Vote); 
 
+/**
+ * CLEANUP:
+ * PUT and PATCH have the same function as the MW
+ * The ensureCanGetVote and ensureCanUpdateVote perms are basically the same
+ * 
+ */
+
 // ensureCanCreateVote => check if trying to create vote's user matches the user aka tryna create his own vote
 
 
