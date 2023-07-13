@@ -53,7 +53,13 @@ function ensureCanGetVote(req, res, next) {
     next();
 }
 function ensureCanUpdateVote(req, res, next) {
-    next();
+    const user = req.user; 
+    const vote = req.vote; 
+    console.log(vote, user);
+    if (user._id.toString() !== vote.user._id.toString()) {
+        return res.status(403).send({error: "Users can only update their Votes"});
+    }
+    next(); 
 }
 
 function ensureCanGetVotesOfUser(req, res, next) {
@@ -113,7 +119,7 @@ router.post('/', ensureAuthenticated, ensureCanCreateVote, async (req, res, next
 })
 
 // Only allow the value of the vote to be updated
-router.put('/:voteId', ensureAuthenticated, ensureCanUpdateVote, async (req, res, next) => {
+router.put('/:voteId', ensureAuthenticated, setVoteOnRequest, ensureCanUpdateVote, async (req, res, next) => {
     if (!mongoose.isValidObjectId(req.params.voteId)) {
         return res.status(404).json({error: "Invalid ID"});
     }
@@ -127,11 +133,11 @@ router.put('/:voteId', ensureAuthenticated, ensureCanUpdateVote, async (req, res
     try {
         // Not doing .save cuz triggers schema validation in pre hook, which would throw an error because the newVote is just { value: value }, when findByIdAndUpdate is performing a partial update
         // const vote = await Vote.findByIdAndUpdate(req.params.voteId, {value}, {new: true}); 
-        const vote = await Vote.findById(req.params.voteId);
+        // const vote = await Vote.findById(req.params.voteId);
+        const vote = req.vote; 
         if (!vote) throw new Error("Could not find Vote"); 
         vote.value = value;
         vote.$locals.skipPreSaveValidation = true; 
-        console.log({vote}); 
         vote.save();
         res.status(200).json({ vote, message: "Success" });
     } catch(err) {
