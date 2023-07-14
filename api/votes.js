@@ -2,6 +2,7 @@ const router = require('express').Router();
 const mongoose = require('mongoose'); 
 const passport = require("passport"); 
 const Vote = mongoose.model('Vote'); 
+const Post = mongoose.model('Post');
 
 console.log("VOTE MODEL");
 console.log(Vote); 
@@ -28,6 +29,12 @@ function ensureAuthenticated(req, res, next) {
 function ensureCanCreateVote(req, res, next) {
     const user = req.user; // User making the request
     const vote = req.body;
+    console.log({user, vote}); 
+    if (vote.user == undefined) {
+        // no user was supplied in the vote object's body
+        return next(); 
+
+    }
     if (user._id.toString() !== vote.user) {
         // User is trying to create a Vote in another user's name
         return res.status(401).json({error: "Users cannot create Votes in other users' name"})
@@ -107,7 +114,10 @@ router.get('/:voteId', ensureAuthenticated, setVoteOnRequest, ensureCanGetVote, 
 })
 
 router.post('/', ensureAuthenticated, ensureCanCreateVote, async (req, res, next) => {
-    const {user, post, value} = req.body;
+    // const {user, post, value} = req.body;
+    const {post, value} = req.body;
+    const user = req.user._id.toString(); 
+
     if (!mongoose.isValidObjectId(user) || !mongoose.isValidObjectId(post)) {
         return res.status(404).json({error: "Invalid user or post"})
     }
@@ -116,7 +126,15 @@ router.post('/', ensureAuthenticated, ensureCanCreateVote, async (req, res, next
         const vote = new Vote({user, post, value});
         console.log("vote");
         console.log(vote);
-        await vote.save(); 
+        const savedVote = await vote.save(); 
+
+        // Also update the vote counts in the Post associated to which this newly created Vote is
+        const votedPost = await Post.findById(post);
+        const voteCountPropertyName = (value == 1) ? 'upvoteCount' : 'downvoteCount';
+        votedPost[voteCountPropertyName]++;
+        votedPost.votes.push(savedVote._id);
+        await votedPost.save(); 
+
         res.status(201).json({message: "Vote created succesfully"});
 
     } catch(err) {

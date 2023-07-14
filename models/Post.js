@@ -15,5 +15,16 @@ const PostSchema = new Schema({
   downvoteCount: { type: Number, default: 0},
 });
 
+PostSchema.statics.voteOnPost = async function(postId, value) {
+  const voteCountPropertyName = (value == 1) ? 'upvoteCount' : 'downvoteCount';
+  
+  await this.findByIdAndUpdate(postId, {
+    $inc: {
+        [voteCountPropertyName] : 1
+    }
+  });
+  
+}
+
 
 module.exports = PostSchema;
