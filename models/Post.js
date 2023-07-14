@@ -19,8 +19,26 @@ PostSchema.statics.voteOnPost = async function(postId, savedVote) {
   const votedPost = await this.findById(postId);
   const voteCountPropertyName = (savedVote.value == 1) ? 'upvoteCount' : 'downvoteCount';
   votedPost[voteCountPropertyName]++;
+
   votedPost.votes.push(savedVote._id);
   await votedPost.save(); 
+}
+
+PostSchema.statics.updateVoteOnPost = async function(postId, savedVote) {
+  const votedPost = await this.findById(postId);
+  const voteCountPropertyName = (savedVote.value == 1) ? 'upvoteCount' : 'downvoteCount';
+  const otherVoteCountPropertyName = (savedVote.value == 1) ? 'downvoteCount' : 'upvoteCount';
+
+  votedPost[voteCountPropertyName]++;
+  votedPost[otherVoteCountPropertyName]--;
+  console.log(votedPost.votes); 
+  console.log({savedVote}); 
+  const idx = votedPost.votes.findIndex(vote =>  vote.toString() == savedVote._id.toString() );
+  console.log({idx}); 
+  if (idx == -1) return ({ error: "Vote does not exist in Post's votes array", status: 404});
+  votedPost.votes[idx].value = savedVote.value;
+  await votedPost.save();   
+  return ({message: "Success"});
 }
 
 

@@ -159,8 +159,12 @@ async function updateVote(req, res, next) {
         if (!vote) throw new Error("Could not find Vote"); 
         vote.value = value;
         vote.$locals.skipPreSaveValidation = true; 
-        vote.save();
-        res.status(200).json({ vote, message: "Success" });
+        const savedVote = await vote.save();
+        const result = await Post.updateVoteOnPost(savedVote.post, savedVote);
+        if (result.error) {
+            return res.status(result.status).json({error: result.error});
+        }
+        return res.status(200).json({ vote, message: "Success" });
     } catch(err) {
         return next(err); 
     }
