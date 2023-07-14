@@ -11,8 +11,8 @@ const PostSchema = new Schema({
   author: { type: Schema.Types.ObjectId, ref: mongoose.model('User') },
   content: { type: String, required: true, maxLength: maxContentLength },
   votes: { type: [VoteSchema], default: []},
-  upvotes: { type: Number, default: 0},
-  downvotes: { type: Number, default: 0},
+  upvoteCount: { type: Number, default: 0},
+  downvoteCount: { type: Number, default: 0},
 });
 
 
