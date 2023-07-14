@@ -129,11 +129,7 @@ router.post('/', ensureAuthenticated, ensureCanCreateVote, async (req, res, next
         const savedVote = await vote.save(); 
 
         // Also update the vote counts in the Post associated to which this newly created Vote is
-        const votedPost = await Post.findById(post);
-        const voteCountPropertyName = (value == 1) ? 'upvoteCount' : 'downvoteCount';
-        votedPost[voteCountPropertyName]++;
-        votedPost.votes.push(savedVote._id);
-        await votedPost.save(); 
+        await Post.voteOnPost(post, savedVote);
 
         res.status(201).json({message: "Vote created succesfully"});
 
