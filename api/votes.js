@@ -66,6 +66,9 @@ function ensureCanGetVote(req, res, next) {
 
     next();
 }
+
+// NOTE: This does not mean a user cannot vote on posts other than his!!
+// This only means that a user can modify only HIS votes, the ones he made
 function ensureCanUpdateVote(req, res, next) {
     const user = req.user; 
     const vote = req.vote; 
@@ -113,6 +116,7 @@ router.get('/:voteId', ensureAuthenticated, setVoteOnRequest, ensureCanGetVote, 
     }
 })
 
+// Will automatically update the associate Post's document s well 
 router.post('/', ensureAuthenticated, ensureCanCreateVote, async (req, res, next) => {
     // const {user, post, value} = req.body;
     const {post, value} = req.body;
@@ -139,7 +143,7 @@ router.post('/', ensureAuthenticated, ensureCanCreateVote, async (req, res, next
     }
 })
 
-
+// Will automatically update the associate Post's document s well 
 async function updateVote(req, res, next) {
     if (!mongoose.isValidObjectId(req.params.voteId)) {
         return res.status(404).json({error: "Invalid ID"});
