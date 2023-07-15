@@ -135,7 +135,7 @@ router.post('/', ensureAuthenticated, ensureCanCreateVote, async (req, res, next
         // Also update the vote counts in the Post associated to which this newly created Vote is
         await Post.voteOnPost(post, savedVote);
 
-        res.status(201).json({message: "Vote created succesfully"});
+        res.status(201).json({message: "Vote created succesfully", vote: savedVote});
 
     } catch(err) {
         console.log(err.message);
