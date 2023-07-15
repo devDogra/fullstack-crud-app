@@ -143,6 +143,26 @@ router.post('/', ensureAuthenticated, ensureCanCreateVote, async (req, res, next
     }
 })
 
+router.delete('/:voteId', ensureAuthenticated, setVoteOnRequest, ensureCanUpdateVote, async (req, res, next) => {
+    if (!mongoose.isValidObjectId(req.params.voteId)) {
+        return res.status(404).json({error: "Invalid ID"});
+    }
+    
+    try {
+        const voteToDelete = req.vote; 
+        if (!voteToDelete) throw new Error("Could not find Vote"); 
+        
+        const deleteResult = await Vote.findByIdAndDelete(voteToDelete._id.toString());
+        const result = await Post.deleteVoteOnPost(voteToDelete.post, voteToDelete);
+
+        if (result.error) {
+            return res.status(result.status).json({error: result.error});
+        }
+        return res.status(200).json({ voteToDelete, message: "Successfully deleted" });
+    } catch(err) {
+        return next(err); 
+    }
+})
 // Will automatically update the associate Post's document s well 
 async function updateVote(req, res, next) {
     if (!mongoose.isValidObjectId(req.params.voteId)) {

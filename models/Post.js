@@ -41,5 +41,15 @@ PostSchema.statics.updateVoteOnPost = async function(postId, savedVote) {
   return ({message: "Success"});
 }
 
+PostSchema.statics.deleteVoteOnPost = async function(postId, voteToDelete) {
+  const votedPost = await this.findById(postId);
+  const voteCountPropertyName = (voteToDelete.value == 1) ? 'upvoteCount' : 'downvoteCount';
+  votedPost[voteCountPropertyName]--;
+
+  votedPost.votes = votedPost.votes.filter(vote => vote.toString() != voteToDelete.toString());
+  await votedPost.save();
+  return ({message: "Success"});
+}
+
 
 module.exports = PostSchema;

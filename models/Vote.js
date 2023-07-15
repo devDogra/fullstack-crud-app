@@ -3,6 +3,9 @@ const Schema = mongoose.Schema;
 const DOWNVOTE = -1;
 const UPVOTE = +1;
 
+// Should I maintain a NOVOTE value too for caching purposes? 
+// No, just gonna take up space right? 
+// But updates (downvote -> novote) will be faster... 
 const VoteSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: mongoose.model('User')},
     // post: { type: Schema.Types.ObjectId, ref: mongoose.model('Post')},
