@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const VoteSchema = require("./Vote");
 const Schema = mongoose.Schema;
 
-const initialWeight = 1000;
 const maxContentLength = 256;
 const maxTitleLength = 64;
 
